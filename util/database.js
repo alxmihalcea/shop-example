@@ -22,6 +22,7 @@ const mongoConnect = (callback) => {
     });
 };
 
+/** @returns {import("mongodb").Db} */
 const getDb = () => {
   if (_db) {
     return _db;
