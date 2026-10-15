@@ -20,6 +20,7 @@
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
     "mongodb": "^7.7.0",
+    "mongoose": "^9.11.1",
     "mysql2": "^3.24.5",
     "pug": "^2.0.3",
     "sequelize": "^6.37.8"
