@@ -1,45 +1,66 @@
 require("dotenv").config();
-const path = require("path");
+const requiredEnv = ["DB_PASSWORD", "SESSION_SECRET_KEY"];
+for (const key of requiredEnv) {
+  if (!process.env[key]) throw new Error(`${key} is not set`);
+}
 
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoDbStore = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
 const mongoDbPassword = encodeURIComponent(process.env.DB_PASSWORD);
+const sessionSecretKey = process.env.SESSION_SECRET_KEY;
+const MONGODB_URI = `mongodb+srv://alex:${mongoDbPassword}@cluster0.gddgznl.mongodb.net/shop?appName=Cluster0`;
 const User = require("./models/user");
 
 const app = express();
+const store = new MongoDbStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+});
 
 app.set("view engine", "ejs");
 app.set("views", "views");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const authRoutes = require("./routes/auth");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: sessionSecretKey,
+    resave: false,
+    saveUninitialized: false,
+    store,
+  }),
+);
 
 app.use((req, res, next) => {
-  User.findById("6acf87237cffe6f3c646b74f")
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch((err) => console.log(err));
 });
 
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(errorController.get404);
 
 mongoose
-  .connect(
-    `mongodb+srv://alex:${mongoDbPassword}@cluster0.gddgznl.mongodb.net/shop?appName=Cluster0`,
-  )
+  .connect(MONGODB_URI)
   .then((result) => {
     User.findOne().then((user) => {
       if (!user) {

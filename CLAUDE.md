@@ -21,7 +21,7 @@ There are no tests. An ESLint config exists as `eslintrc.json` (no leading dot, 
   - [util/database.js](util/database.js) (`mongoConnect`/`getDb`, native `mongodb` driver) belongs to the previous course section and is no longer used by the live code.
   - `data/*.json` holds data from the even earlier file-based storage section, and is also unused.
   - `mysql2`/`sequelize`, `pug` and `express-handlebars` in package.json are left over from earlier sections too. Only EJS is the active view engine.
-- **Fake auth**: a middleware in [app.js](app.js) loads a hardcoded user by ObjectId on every request and attaches it as `req.user` (a full Mongoose document, so methods like `req.user.addToCart(product)` work). On startup, a default user is created if the users collection is empty. If the DB is reset, the hardcoded ID in that middleware must be updated to match the new user.
+- **Fake auth**: a middleware in [app.js](app.js) loads a hardcoded user by ObjectId on every request and attaches it as `req.session.user` (a full Mongoose document, so methods like `req.session.user.addToCart(product)` work). On startup, a default user is created if the users collection is empty. If the DB is reset, the hardcoded ID in that middleware must be updated to match the new user.
 - **Models**: `Product` has a `userId` ref to `User`. `User` embeds `cart.items[]` (`{ productId, quantity }`) and defines instance methods via `userSchema.methods`.
 - **Work in progress**: in [routes/shop.js](routes/shop.js), the cart view, cart item deletion and order routes are commented out while they're being migrated to Mongoose.
 
