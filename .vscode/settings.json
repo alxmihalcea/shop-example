@@ -13,5 +13,6 @@
   "[html]": {
     "editor.defaultFormatter": "j69.ejs-beautify",
     "editor.formatOnSave": true
-  }
+  },
+  "cSpell.words": ["Mihalcea"]
 }
