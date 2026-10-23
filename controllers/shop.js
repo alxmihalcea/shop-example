@@ -208,6 +208,7 @@ exports.getCheckout = (req, res, next) => {
         products: products,
         totalSum: total,
         sessionId: session.id,
+        stripePublicKey: process.env.STRIPE_PUBLISH,
       });
     })
     .catch((err) => {
